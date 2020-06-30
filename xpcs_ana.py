@@ -40,7 +40,7 @@ def polarROI(rad, phi, ra, rb, phia, phib):
 
 
 def box_to_roi(imgs, mask):
-    """ Reduce the imgs to the smallest box around the roi defined by mask. Also applies the mask.
+    """ Reduce the imgs to the smallest box around the roi defined by mask.
     
     Args:
         imgs: stack of images or single image (ndim= 2 or 3)
@@ -83,8 +83,7 @@ def box_to_roi_extend(imgs, mask, extend=10):
     maskn = mask[posx_min:posx_max, posy_min:posy_max]
     imgs_red = imgs[:,posx_min:posx_max, posy_min:posy_max]
     return np.squeeze(imgs_red), maskn
-    
-    
+
 
 def _spatial_correlation_fourier(fim1, fim2_star, fmask, fmask_star):
     A_num1 = np.fft.irfft2(fim1*fim2_star)
@@ -138,7 +137,7 @@ def remove_central_corr(A):
 
 def correct_illumination(imgs, roi, kernel_size=5):
     """ Correct the detector images for non-uniform illumination.
-    The correction follows Part II in Duri et al. PHYS. REV. E 72, 051401 (2005)
+    This implementaion follows Part II in Duri et al. PHYS. REV. E 72, 051401 (2005).
     
     Args:
         imgs: stack of detector images
@@ -147,11 +146,15 @@ def correct_illumination(imgs, roi, kernel_size=5):
         kernel_size: size of the kernel for box-average. Can be None, in which case no kernel is applied
         
     Returns:
-        imgs: corrected cropped images normalized
+        imgs: corrected images, cropped to an extended box aroung the roi
         roi: new roi for the cropped image
         bp: correction factor
     """
-    imgs, roi = box_to_roi_extend(imgs, roi, extend=2*kernel_size)
+    if kernel_size is None:
+        extend = 10
+    else:
+        extend=2*kernel_size
+    imgs, roi = box_to_roi_extend(imgs, roi, extend=extend)
     bp = np.mean(imgs, axis=0)
     if kernel_size is not None:
         kernel = np.ones([kernel_size, kernel_size])/kernel_size/kernel_size
