@@ -99,7 +99,7 @@ def _spatial_correlation_fourier(fim1, fim2_star, fmask, fmask_star):
 
 
 def spatial_correlation_fourier(img, img2=None, mask=None):
-    """ Compute spatial correlation between two images.
+    """ Compute spatial correlation between two images using Fourier transform.
     
     Args:
         img: first image
@@ -141,9 +141,10 @@ def correct_illumination(imgs, roi, kernel_size=5):
     
     Args:
         imgs: stack of detector images
-        roi: region of interest to consider. 
-            Important so that the normalization of the correction is for the specific roi
-        kernel_size: size of the kernel for box-average. Can be None, in which case no kernel is applied
+        roi: region of interest to consider. Important so that the normalization of the correction 
+            is ~unity for the specific roi
+        kernel_size: size of the kernel for box-average. Can be None, in which case no kernel is 
+            applied. The kernel is used to smooth out remaining speckly structure in the intensity correction.
         
     Returns:
         imgs: corrected images, cropped to an extended box aroung the roi
